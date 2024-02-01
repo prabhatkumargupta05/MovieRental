@@ -15,8 +15,8 @@ type handler struct {
 	service service.Service
 }
 
-func NewHandler(service service.Service) (Handler, error) {
-	return &handler{service: service}, nil
+func NewHandler(service service.Service) Handler {
+	return &handler{service: service}
 }
 
 func (h *handler) GetEndPoint(ctx *gin.Context) {

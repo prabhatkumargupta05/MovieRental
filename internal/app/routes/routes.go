@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"movierental/internal/app/handlers"
 	"movierental/internal/app/repository"
 	"movierental/internal/app/service"
@@ -10,23 +9,9 @@ import (
 )
 
 func RegisterRoutes(engine *gin.Engine) {
-	repository, err := repository.NewRepository()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	service, err := service.NewService(repository)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	handlers, err := handlers.NewHandler(service)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	repository := repository.NewRepository()
+	service := service.NewService(repository)
+	handlers := handlers.NewHandler(service)
 
 	group := engine.Group("/movierental")
 	{

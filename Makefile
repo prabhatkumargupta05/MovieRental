@@ -7,11 +7,11 @@ BINARY_NAME=movierental
 all: build
 
 build:
-	go build -o $(BINARY_NAME) cmd/main.go
+	go build -o bin/$(BINARY_NAME) cmd/main.go
 
 run:
-	./$(BINARY_NAME)
+	bin/$(BINARY_NAME)
 
 clean:
 	go clean
-	rm -f $(BINARY_NAME)
+	rm -f bin/$(BINARY_NAME)

@@ -10,8 +10,8 @@ type service struct {
 	repo repository.Repository
 }
 
-func NewService(repo repository.Repository) (Service, error) {
-	return &service{repo: repo}, nil
+func NewService(repo repository.Repository) Service {
+	return &service{repo: repo}
 }
 
 func (s *service) GetEndPoint() (string, error) {

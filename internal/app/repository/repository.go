@@ -6,8 +6,8 @@ type Repository interface {
 
 type repository struct{}
 
-func NewRepository() (Repository, error) {
-	return &repository{}, nil
+func NewRepository() Repository {
+	return &repository{}
 }
 
 func (repo repository) GetEndPoint() (string, error) {
