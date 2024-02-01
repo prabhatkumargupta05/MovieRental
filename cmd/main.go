@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"movierental/configs"
 	"movierental/internal/app/routes"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,8 +15,11 @@ func main() {
 
 	engine := gin.Default()
 	routes.RegisterRoutes(engine)
+
+	config := configs.Config{}
+	configs.GetConfigs(&config)
 	server := http.Server{
-		Addr:                         ":8080",
+		Addr:                         ":" + strconv.Itoa(config.Server.Port),
 		Handler:                      engine,
 		DisableGeneralOptionsHandler: false,
 		TLSConfig:                    nil,
