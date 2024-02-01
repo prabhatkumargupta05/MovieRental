@@ -12,5 +12,5 @@ func NewRepository() Repository {
 
 func (repo repository) GetEndPoint() (string, error) {
 	_ = repo
-	return "helloworld", nil
+	return "helloworld...", nil
 }
