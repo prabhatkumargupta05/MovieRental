@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,12 +13,15 @@ import (
 type Repository interface {
 	GetEndPoint() (string, error)
 	GetMoviesEndPoint() ([]dto.Movie, error)
+	GetAllMovieData() ([]dto.Movie, error)
 }
 
-type repository struct{}
+type repository struct {
+	Db *sql.DB
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db *sql.DB) Repository {
+	return &repository{Db: db}
 }
 
 func (repo repository) GetEndPoint() (string, error) {
@@ -55,4 +59,23 @@ func (repo repository) GetMoviesEndPoint() ([]dto.Movie, error) {
 		os.Exit(1)
 	}
 	return moviesResponse.Movies, nil
+}
+
+func (repo repository) GetAllMovieData() ([]dto.Movie, error) {
+	rows, err := repo.Db.Query("SELECT * FROM movie")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var movies []dto.Movie
+	for rows.Next() {
+		var movie dto.Movie
+		err = rows.Scan(&movie.ID, &movie.Title, &movie.Year, &movie.Rated, &movie.Released, &movie.Runtime, &movie.Genre, &movie.Director, &movie.Writer, &movie.Actors, &movie.Language, &movie.Country, &movie.Awards, &movie.Metascore, &movie.ImdbRating, &movie.ImdbVotes, &movie.ImdbID, &movie.Type, &movie.Dvd, &movie.BoxOffice, &movie.Production, &movie.Website, &movie.Response)
+		if err != nil {
+			return nil, err
+		}
+		movies = append(movies, movie)
+	}
+	return movies, nil
 }

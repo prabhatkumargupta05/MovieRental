@@ -1,9 +1,13 @@
 package repository
 
-import "testing"
+import (
+	"movierental/database"
+	"testing"
+)
 
 func TestShouldReturnHelloworldMessage(t *testing.T) {
-	repository := NewRepository()
+	db := database.CreateConnection()
+	repository := NewRepository(db)
 	message, err := repository.GetEndPoint()
 	expectedMessage := "helloworld..."
 	var expectedError error

@@ -8,6 +8,7 @@ import (
 type Service interface {
 	GetEndPoint() (string, error)
 	GetMoviesEndPoint() ([]dto.Movie, error)
+	GetAllMovieData() ([]dto.Movie, error)
 }
 
 type service struct {
@@ -24,4 +25,8 @@ func (s *service) GetEndPoint() (string, error) {
 
 func (s *service) GetMoviesEndPoint() ([]dto.Movie, error) {
 	return s.repo.GetMoviesEndPoint()
+}
+
+func (s *service) GetAllMovieData() ([]dto.Movie, error) {
+	return s.repo.GetAllMovieData()
 }
