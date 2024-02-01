@@ -16,6 +16,8 @@ func RegisterRoutes(engine *gin.Engine) {
 	group := engine.Group("/movierental")
 	{
 		group.GET("/hello", handlers.GetEndPoint)
+		group.GET("/movies", handlers.GetMoviesEndPoint)
+
 	}
 
 }
