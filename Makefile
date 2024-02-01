@@ -1,6 +1,6 @@
 # Makefile
 
-.PHONY: all build run clean
+.PHONY: all build run test clean
 
 BINARY_NAME=movierental
 
@@ -15,3 +15,6 @@ run:
 clean:
 	go clean
 	rm -f bin/$(BINARY_NAME)
+
+test:
+	go clean -testcache && 	go test ./...
