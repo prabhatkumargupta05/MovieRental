@@ -1,10 +1,6 @@
 package tests
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/goccy/go-json"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"movierental/configs"
 	"movierental/database"
 	"movierental/internal/app/dto"
@@ -14,9 +10,14 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func setUp() *gin.Engine {
+func initAndRespond(requestUrl string, t *testing.T) (int, []dto.Movie, error) {
 	engine := gin.Default()
 	config := configs.Config{}
 	configs.GetConfigs(&config)
@@ -29,42 +30,36 @@ func setUp() *gin.Engine {
 	{
 		group.GET("/movies", handlers.GetAllMovieData)
 	}
-	return engine
+
+	request, err := http.NewRequest(http.MethodGet, requestUrl, nil)
+	require.NoError(t, err)
+
+	responseRecorder := httptest.NewRecorder()
+	engine.ServeHTTP(responseRecorder, request)
+
+	var response []dto.Movie
+	err = json.NewDecoder(responseRecorder.Body).Decode(&response)
+	require.NoError(t, err)
+
+	return responseRecorder.Code, response, err
 }
+
 func TestShouldGiveListOfAllMovies(t *testing.T) {
-	engine := setUp()
-	request, err := http.NewRequest(http.MethodGet, "/movierental/movies", nil)
-
-	require.NoError(t, err)
-	responseRecorder := httptest.NewRecorder()
-	engine.ServeHTTP(responseRecorder, request)
-	//what should be variable type here
-	var response []dto.Movie
-
-	err = json.NewDecoder(responseRecorder.Body).Decode(&response)
-	require.NoError(t, err)
-
+	responseCode, respondMovies, err := initAndRespond("/movierental/movies", t)
 	// Assert
-	assert.Equal(t, responseRecorder.Code, http.StatusOK)
-	assert.Equal(t, 6, len(response))
+	assert.Equal(t, err, nil)
+	assert.Equal(t, responseCode, http.StatusOK)
+	assert.Equal(t, 6, len(respondMovies))
 
-}
-
-func TestShouldGiveListOfFilteredMovies(t *testing.T) {
-	engine := setUp()
-	request, err := http.NewRequest(http.MethodGet, "/movierental/movies?title=batman", nil)
-
-	require.NoError(t, err)
-	responseRecorder := httptest.NewRecorder()
-	engine.ServeHTTP(responseRecorder, request)
-	//what should be variable type here
-	var response []dto.Movie
-
-	err = json.NewDecoder(responseRecorder.Body).Decode(&response)
-	require.NoError(t, err)
-
+	responseCode, respondMovies, err = initAndRespond("/movierental/movies?title=batman", t)
 	// Assert
-	assert.Equal(t, responseRecorder.Code, http.StatusOK)
-	assert.Equal(t, 3, len(response))
+	assert.Equal(t, err, nil)
+	assert.Equal(t, responseCode, http.StatusOK)
+	assert.Equal(t, 3, len(respondMovies))
 
+	responseCode, respondMovies, err = initAndRespond("/movierental/movies?title=batman&actors=michael", t)
+	// Assert
+	assert.Equal(t, err, nil)
+	assert.Equal(t, responseCode, http.StatusOK)
+	assert.Equal(t, 2, len(respondMovies))
 }

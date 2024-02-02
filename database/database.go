@@ -3,9 +3,9 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"github.com/golang-migrate/migrate/v4"
+		"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	"log"
+"log"
 	"movierental/configs"
 
 	_ "github.com/lib/pq"
@@ -49,10 +49,10 @@ func runMigrations(db *sql.DB) error {
 	m, err := migrate.NewWithDatabaseInstance(
 		"file://database/migration", // Replace with the actual path to your migration scripts
 		"movierental-db", driver)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
-	fmt.Println("YYYYYYYY")
+	fmt.Println("Running Migration...")
 
 	// You can use m.Up() to apply all migrations, or m.Steps(n) to apply 'n' steps.
 	// Example: m.Steps(2) applies the first 2 migrations.

@@ -2,15 +2,13 @@ package repository
 
 import (
 	"movierental/configs"
-	"movierental/database"
 	"testing"
 )
 
 func TestShouldReturnHelloworldMessage(t *testing.T) {
 	config := configs.Config{}
 	configs.GetConfigs(&config)
-	db := database.CreateConnection(config.Database)
-	repository := NewRepository(db)
+	repository := NewRepository(nil)
 	message, err := repository.GetEndPoint()
 	expectedMessage := "helloworld..."
 	var expectedError error
