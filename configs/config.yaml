@@ -8,4 +8,4 @@ database:
   name: "postgres"
   user: "postgres"
   password: "postgres"
-  database: "movierental-db"
+  databasename: "movierental-db"

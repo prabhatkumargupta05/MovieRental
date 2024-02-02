@@ -13,11 +13,12 @@ import (
 func main() {
 	fmt.Println("Welcome to Movie Rental System...")
 
-	engine := gin.Default()
-	routes.RegisterRoutes(engine)
-
 	config := configs.Config{}
 	configs.GetConfigs(&config)
+	
+	engine := gin.Default()
+	routes.RegisterRoutes(engine, config.Database)
+
 	server := http.Server{
 		Addr:                         ":" + strconv.Itoa(config.Server.Port),
 		Handler:                      engine,

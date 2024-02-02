@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"movierental/internal/app/dto"
 	"movierental/internal/app/service"
 	"net/http"
 
@@ -24,7 +25,7 @@ func NewHandler(service service.Service) Handler {
 func (h *handler) GetEndPoint(ctx *gin.Context) {
 	message, err := h.service.GetEndPoint()
 	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
+		ctx.Status(http.StatusInternalServerError)
 		return
 	}
 	ctx.AbortWithStatusJSON(http.StatusOK, message)
@@ -32,18 +33,29 @@ func (h *handler) GetEndPoint(ctx *gin.Context) {
 
 func (h *handler) GetMoviesEndPoint(ctx *gin.Context) {
 	message, err := h.service.GetMoviesEndPoint()
-    if err!= nil {
-        ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
-        return
-    }
-    ctx.AbortWithStatusJSON(http.StatusOK, message)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	ctx.AbortWithStatusJSON(http.StatusOK, message)
 }
 
 func (h *handler) GetAllMovieData(ctx *gin.Context) {
-	message, err := h.service.GetAllMovieData()
-    if err!= nil {
-        ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
-        return
-    }
-    ctx.AbortWithStatusJSON(http.StatusOK, message)
+	//title := ctx.Query("title")
+	var message []dto.Movie
+	var err error
+	// if len(title) > 0 {
+	// 	message, err = h.service.GetAllMovieData()
+	// }
+	// else {
+	// 	message, err = h.service.GetAllMovieData()
+	// }
+	message, err = h.service.GetAllMovieData()
+
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		//ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
+		return
+	}
+	ctx.AbortWithStatusJSON(http.StatusOK, message)
 }

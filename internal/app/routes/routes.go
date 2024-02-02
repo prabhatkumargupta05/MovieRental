@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"movierental/configs"
 	"movierental/database"
 	"movierental/internal/app/handlers"
 	"movierental/internal/app/repository"
@@ -9,8 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(engine *gin.Engine) {
-	db := database.CreateConnection()
+func RegisterRoutes(engine *gin.Engine, dbConfig configs.DatabaseConfig) {
+	db := database.CreateConnection(dbConfig)
 	repository := repository.NewRepository(db)
 	service := service.NewService(repository)
 	handlers := handlers.NewHandler(service)
@@ -18,8 +19,8 @@ func RegisterRoutes(engine *gin.Engine) {
 	group := engine.Group("/movierental")
 	{
 		group.GET("/hello", handlers.GetEndPoint)
-		group.GET("/movies", handlers.GetMoviesEndPoint)
-		group.GET("/movies/all", handlers.GetAllMovieData)
+		group.GET("/moviesv0", handlers.GetMoviesEndPoint)
+		group.GET("/movies", handlers.GetAllMovieData)
 	}
 
 }

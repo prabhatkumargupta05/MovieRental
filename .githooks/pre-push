@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Run tests before pushing
+echo "Running all tests before pushing..."
+
+go clean -testcache && go test ./...
+
+# If tests fail, prevent the push
+if [ $? -ne 0 ]; then
+    echo "Tests failed. Push aborted."
+    exit 1
+else
+    echo "Tests passed. Proceeding to push the commit..."
+fi
+ 
