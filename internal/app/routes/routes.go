@@ -21,6 +21,7 @@ func RegisterRoutes(engine *gin.Engine, dbConfig configs.DatabaseConfig) {
 		group.GET("/hello", handlers.GetEndPoint)
 		group.GET("/moviesv0", handlers.GetMoviesEndPoint)
 		group.GET("/movies", handlers.GetAllMovieData)
+		group.GET("/movies/:imdbID", handlers.GetMovieDetail)
 	}
 
 }

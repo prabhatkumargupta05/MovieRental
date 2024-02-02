@@ -14,6 +14,7 @@ type Repository interface {
 	GetEndPoint() (string, error)
 	GetMoviesEndPoint() ([]dto.Movie, error)
 	GetAllMovieData(string, string, string) ([]dto.Movie, error)
+	GetMovieDetail(string) (dto.Movie, error)
 }
 
 type repository struct {
@@ -97,4 +98,25 @@ func (repo repository) GetAllMovieData(title string, year string, actors string)
 		movies = append(movies, movie)
 	}
 	return movies, nil
+}
+
+func (repo repository) GetMovieDetail(imdbID string) (dto.Movie, error) {
+	var rows *sql.Rows
+
+	query := "SELECT * FROM movie WHERE imdb_id=$1"
+	rows, err := repo.Db.Query(query, imdbID)
+	if err != nil {
+		fmt.Println("DB query failed : ", err)
+		return dto.Movie{}, err
+	}
+	defer rows.Close()
+	var movie dto.Movie
+	for rows.Next() {
+
+		err = rows.Scan(&movie.ID, &movie.Title, &movie.Year, &movie.Rated, &movie.Released, &movie.Runtime, &movie.Genre, &movie.Director, &movie.Writer, &movie.Actors, &movie.Language, &movie.Country, &movie.Awards, &movie.Metascore, &movie.ImdbRating, &movie.ImdbVotes, &movie.ImdbID, &movie.Type, &movie.Dvd, &movie.BoxOffice, &movie.Production, &movie.Website, &movie.Response)
+		if err != nil {
+			return dto.Movie{}, err
+		}
+	}
+	return movie, nil
 }

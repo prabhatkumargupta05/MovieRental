@@ -11,6 +11,8 @@ type Handler interface {
 	GetEndPoint(ctx *gin.Context)
 	GetMoviesEndPoint(ctx *gin.Context)
 	GetAllMovieData(ctx *gin.Context)
+
+	GetMovieDetail(ctx *gin.Context)
 }
 
 type handler struct {
@@ -50,4 +52,15 @@ func (h *handler) GetAllMovieData(ctx *gin.Context) {
 		return
 	}
 	ctx.AbortWithStatusJSON(http.StatusOK, movielist)
+}
+
+func (h *handler) GetMovieDetail(ctx *gin.Context) {
+	param := ctx.Param("imdbID")
+	movieDetail, err := h.service.GetMovieDetail(param)
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+
+		return
+	}
+	ctx.AbortWithStatusJSON(http.StatusOK, movieDetail)
 }
