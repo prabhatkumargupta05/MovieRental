@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"movierental/internal/app/dto"
 	"movierental/internal/app/service"
 	"net/http"
 
@@ -41,21 +40,14 @@ func (h *handler) GetMoviesEndPoint(ctx *gin.Context) {
 }
 
 func (h *handler) GetAllMovieData(ctx *gin.Context) {
-	//title := ctx.Query("title")
-	var message []dto.Movie
-	var err error
-	// if len(title) > 0 {
-	// 	message, err = h.service.GetAllMovieData()
-	// }
-	// else {
-	// 	message, err = h.service.GetAllMovieData()
-	// }
-	message, err = h.service.GetAllMovieData()
-
+	title := ctx.Query("title")
+	year := ctx.Query("year")
+	actors := ctx.Query("actors")
+	movielist, err := h.service.GetAllMovieData(title, year, actors)
 	if err != nil {
 		ctx.Status(http.StatusInternalServerError)
 		//ctx.AbortWithStatusJSON(http.StatusInternalServerError, err)
 		return
 	}
-	ctx.AbortWithStatusJSON(http.StatusOK, message)
+	ctx.AbortWithStatusJSON(http.StatusOK, movielist)
 }

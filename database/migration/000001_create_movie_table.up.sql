@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS movie (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    year INTEGER NOT NULL,
+    year VARCHAR(10) NOT NULL,
     rated VARCHAR(10) NOT NULL,
     released DATE,
     runtime VARCHAR(32) NOT NULL,

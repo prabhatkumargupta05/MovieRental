@@ -13,7 +13,7 @@ import (
 type Repository interface {
 	GetEndPoint() (string, error)
 	GetMoviesEndPoint() ([]dto.Movie, error)
-	GetAllMovieData() ([]dto.Movie, error)
+	GetAllMovieData(string, string, string) ([]dto.Movie, error)
 }
 
 type repository struct {
@@ -61,9 +61,28 @@ func (repo repository) GetMoviesEndPoint() ([]dto.Movie, error) {
 	return moviesResponse.Movies, nil
 }
 
-func (repo repository) GetAllMovieData() ([]dto.Movie, error) {
-	rows, err := repo.Db.Query("SELECT * FROM movie")
+func (repo repository) GetAllMovieData(title string, year string, actors string) ([]dto.Movie, error) {
+	var rows *sql.Rows
+	var err error
+	if len(title) == 0 && len(year) == 0 && len(actors) == 0 {
+		rows, err = repo.Db.Query("SELECT * FROM movie")
+	}
+	if len(title) > 0 || len(year) > 0 || len(actors) > 0 {
+		if len(title) == 0 {
+			title = "%"
+		}
+		if len(actors) == 0 {
+			actors = "%"
+		}
+		if len(year) == 0 {
+			year = "%"
+		}
+
+		query := "SELECT * FROM movie WHERE title ILIKE $1 AND actors ILIKE $2 AND year ILIKE $3;"
+		rows, err = repo.Db.Query(query, "%"+title+"%", "%"+actors+"%", "%"+year+"%")
+	}
 	if err != nil {
+		fmt.Println("DB query failed : ", err)
 		return nil, err
 	}
 	defer rows.Close()
