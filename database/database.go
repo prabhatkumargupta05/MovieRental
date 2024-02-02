@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"log"
 	"movierental/configs"
 
@@ -39,24 +41,24 @@ func CreateConnection(dbConfig configs.DatabaseConfig) *sql.DB {
 }
 
 func runMigrations(db *sql.DB) error {
-	// driver, err := postgres.WithInstance(db, &postgres.Config{})
-	// if err != nil {
-	// 	return err
-	// }
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	if err != nil {
+		return err
+	}
 
-	// m, err := migrate.NewWithDatabaseInstance(
-	// 	"file://database/migration", // Replace with the actual path to your migration scripts
-	// 	"movierental-db", driver)
-	// if err != nil {
-	// 	return err
-	// }
-	// fmt.Println("YYYYYYYY")
+	m, err := migrate.NewWithDatabaseInstance(
+		"file://database/migration", // Replace with the actual path to your migration scripts
+		"movierental-db", driver)
+	if err != nil {
+		return err
+	}
+	fmt.Println("YYYYYYYY")
 
-	// // You can use m.Up() to apply all migrations, or m.Steps(n) to apply 'n' steps.
-	// // Example: m.Steps(2) applies the first 2 migrations.
-	// if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-	// 	return err
-	// }
+	// You can use m.Up() to apply all migrations, or m.Steps(n) to apply 'n' steps.
+	// Example: m.Steps(2) applies the first 2 migrations.
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return err
+	}
 
 	return nil
 }
