@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS cart (
+    id SERIAL PRIMARY KEY,
+    imdb_id VARCHAR(20)
+    );

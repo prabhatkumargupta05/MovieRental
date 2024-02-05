@@ -32,3 +32,12 @@ type MoviesResponse struct {
 	Total    string  `json:"totalResults"`
 	Response string  `json:"Response"`
 }
+
+type CartMovie struct {
+	ID     int    `json:"ID"`
+	ImdbID string `json:"imdbID"`
+}
+
+type AddtoCartRequestBody struct {
+	ImdbID string `json:"imdbID"`
+}

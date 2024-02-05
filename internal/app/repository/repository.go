@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"movierental/internal/app/dto"
@@ -15,6 +16,8 @@ type Repository interface {
 	GetMoviesEndPoint() ([]dto.Movie, error)
 	GetAllMovieData(string, string, string) ([]dto.Movie, error)
 	GetMovieDetail(string) (dto.Movie, error)
+	AddMovieToCart(string) (string, error)
+	GetMoviesInCart() ([]dto.CartMovie, error)
 }
 
 type repository struct {
@@ -112,11 +115,47 @@ func (repo repository) GetMovieDetail(imdbID string) (dto.Movie, error) {
 	defer rows.Close()
 	var movie dto.Movie
 	for rows.Next() {
-
 		err = rows.Scan(&movie.ID, &movie.Title, &movie.Year, &movie.Rated, &movie.Released, &movie.Runtime, &movie.Genre, &movie.Director, &movie.Writer, &movie.Actors, &movie.Language, &movie.Country, &movie.Awards, &movie.Metascore, &movie.ImdbRating, &movie.ImdbVotes, &movie.ImdbID, &movie.Type, &movie.Dvd, &movie.BoxOffice, &movie.Production, &movie.Website, &movie.Response)
 		if err != nil {
-			return dto.Movie{}, err
+			return movie, errors.New("record not found")
 		}
 	}
-	return movie, nil
+	if movie.ImdbID != "" {
+		return movie, nil
+	}
+	return movie, errors.New("record not found")
+}
+
+func (repo repository) AddMovieToCart(imdbID string) (string, error) {
+	query := "INSERT INTO cart (imdb_id) VALUES ($1);"
+
+	_, err := repo.Db.Exec(query, imdbID)
+	if err != nil {
+		fmt.Println("DB query failed : ", err)
+		return "", err
+	}
+	return fmt.Sprintf("Movie (%s) added to cart", imdbID), nil
+}
+
+func (repo repository) GetMoviesInCart() ([]dto.CartMovie, error) {
+	var rows *sql.Rows
+
+	rows, err := repo.Db.Query("SELECT * FROM cart")
+	if err != nil {
+		fmt.Println("DB query failed : ", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var cartMovies []dto.CartMovie
+	for rows.Next() {
+
+		var cartMovie dto.CartMovie
+		err = rows.Scan(&cartMovie.ID, &cartMovie.ImdbID)
+		if err != nil {
+			return nil, err
+		}
+		cartMovies = append(cartMovies, cartMovie)
+	}
+	return cartMovies, nil
 }

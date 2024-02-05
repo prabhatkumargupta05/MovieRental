@@ -9,8 +9,9 @@ type Service interface {
 	GetEndPoint() (string, error)
 	GetMoviesEndPoint() ([]dto.Movie, error)
 	GetAllMovieData(string, string, string) ([]dto.Movie, error)
-
 	GetMovieDetail(string) (dto.Movie, error)
+	AddMovieToCart(string) (string, error)
+    GetMoviesInCart() ([]dto.CartMovie, error)
 }
 
 type service struct {
@@ -35,4 +36,12 @@ func (s *service) GetAllMovieData(title string, year string, actors string) ([]d
 
 func (s *service) GetMovieDetail(imdbID string) (dto.Movie, error) {
 	return s.repo.GetMovieDetail(imdbID)
+}
+
+func (s *service) AddMovieToCart(imdbID string) (string, error) {
+	return s.repo.AddMovieToCart(imdbID)
+}
+
+func (s *service) GetMoviesInCart() ([]dto.CartMovie, error) {
+    return s.repo.GetMoviesInCart()
 }
